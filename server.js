@@ -84,6 +84,7 @@ app.get('/api/books', function (req, res) {
 // get one book
 // find one book by its id
 app.get('/api/books/:id', function (req, res) {
+  //send one specific book back to requester
   var bookId = req.params.id;
 
   db.Book.findOne({_id: bookId}, function(err, foundBook) {
@@ -92,13 +93,6 @@ app.get('/api/books/:id', function (req, res) {
 });
 
 
-  // console.log('books show', req.params);
-  // for(var i=0; i < books.length; i++) {
-  //   if (books[i]._id === req.params.id) {
-  //     res.json(books[i]);
-  //     break; // we found the right book, we can stop searching
-  //   }
-  // }
 
 // create new book
 // app.post('/api/books', function (req, res) {
