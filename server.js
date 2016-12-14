@@ -92,18 +92,34 @@ app.get('/api/books/:id', function (req, res) {
   });
 });
 
+app.post('/api/books', function(req, res) {
+  //create new book with form data
+  var newBook = new db.Book(req.body);
+  //save new book in db
+  newBook.save(function(err, savedBook) {
+    res.json(savedBook);
+  });
+});
+
+app.put('/api/books/:id', function(req, res) {
+  //get book id from url params ('req.params.id')
+  var bookId = req.params.id;
+
+  db.Book.findOne({ _id: bookId }, function(err, foundBook) {
+    //update the book attributes
+    foundBook.title = req.body.title;
+    foundBook.author = req.body.author;
+    foundBook.image = req.body.image;
+    foundBook.release_date = req.body.release_date;
+
+    //save updated book in db
+    foundBook.save(function(err, savedBook) {
+      res.json(savedBook);
+    });
+  });
+});
 
 
-// create new book
-// app.post('/api/books', function (req, res) {
-//   // create new book with form data (`req.body`)
-//   console.log('books create', req.body);
-//   var newBook = req.body;
-//   newBook._id = newBookUUID++;
-//   books.push(newBook);
-//   res.json(newBook);
-// });
-//
 // // update book
 // app.put('/api/books/:id', function(req,res){
 // // get book id from url params (`req.params`)
@@ -119,23 +135,15 @@ app.get('/api/books/:id', function (req, res) {
 //   res.json(req.params);
 // });
 //
-// // delete book
-// app.delete('/api/books/:id', function (req, res) {
-//   // get book id from url params (`req.params`)
-//   console.log('books delete', req.params);
-//   var bookId = req.params.id;
-//   // find the index of the book we want to remove
-//   var deleteBookIndex = books.findIndex(function(element, index) {
-//     return (element._id === parseInt(req.params.id)); //params are strings
-//   });
-//   console.log('deleting book with index', deleteBookIndex);
-//   var bookToDelete = books[deleteBookIndex];
-//   books.splice(deleteBookIndex, 1);
-//   res.json(bookToDelete);
-// });
 
+app.delete('/api/books/:id', function(req, res) {
+  var bookId = req.params.id;
 
-
+  //find book in db by id and remove
+  db.Book.findOneAndRemove({ _id: bookId }, function(err, deletedBook) {
+    res.json(deletedBook);
+  });
+});
 
 
 app.listen(process.env.PORT || 3000, function () {
